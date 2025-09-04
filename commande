@@ -13,3 +13,16 @@ commande dans le répertoire TutoDjango (racine du projet) : ./manage.py startap
 ./manage.py runserver
 
 
+Maintenant que nous savons pourquoi les migrations sont importantes, créons-en une pour notre modèle.
+Exécutons une autre commande :
+En exécutant makemigrations, vous indiquez à DJANGO que vous avez effectué des changements à vos
+modèles (dans ce cas, vous en avez créé) et que vous aimeriez que ces changements soient stockés sous
+forme de migration. 
+
+./manage.py makemigrations monApp
+
+
+Maintenant, exécutez à nouveau la commande migrate pour créer les tables des modèles dans votre base
+de données :
+
+./manage.py migrate
