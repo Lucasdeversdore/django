@@ -11,3 +11,9 @@ Challenge réalisé. POur faire le routage il faut créer une deuxieme fonction
 Réalisation du tutoriel des tables. 
 Requetes shell effectué
 Réalisation du petit challenge
+
+# TD 2
+
+Probleme avec les dates pour la création de produitADmin
+Probleme de clé étrangère pour le setOffline et setOnline (réglé en créant Online)
+Arret du TD 2 juste avant la debug toolbar

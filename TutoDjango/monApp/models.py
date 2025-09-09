@@ -44,7 +44,7 @@ class Contenir(models.Model):
     qte = models.IntegerField()
 
     def __str__(self):
-        return self.refProd + " " + self.idRayon + " " +self.qte
+        return self.refProd.intituleProd + " " + self.idRayon.nomRayon + " " +str(self.qte)
 
 
 
