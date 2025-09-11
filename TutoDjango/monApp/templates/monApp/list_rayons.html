@@ -1,0 +1,21 @@
+{% extends 'monApp/base.html' %}
+{% block contenu %}
+    <h1>Hello mes rayons !</h1>
+    <p>Mes rayons sont :</p>
+    <ul>
+        {% for ray in rayons %}
+            <li>{{ ray.nomRayon | upper }}</li>
+        {% endfor %}
+        <p>
+            J'ai
+            {% if rayons|length < 5 %}
+            peu de
+            {% elif statrayonsuts|length < 10 %}
+            quelques
+            {% else %}
+            beaucoup de
+            {% endif %}
+            rayons préférés.
+        </p>
+    </ul>
+{% endblock %}

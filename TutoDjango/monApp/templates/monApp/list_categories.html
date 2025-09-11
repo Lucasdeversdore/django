@@ -1,0 +1,21 @@
+{% extends 'monApp/base.html' %}
+{% block contenu %}
+    <h1>Hello mes categories !</h1>
+    <p>Mes categories sont :</p>
+    <ul>
+        {% for cate in categories %}
+            <li>{{ cate.nomCat | upper }}</li>
+        {% endfor %}
+        <p>
+            J'ai
+            {% if categories|length < 5 %}
+            peu de
+            {% elif categories|length < 10 %}
+            quelques
+            {% else %}
+            beaucoup de
+            {% endif %}
+            categories préférés.
+        </p>
+    </ul>
+{% endblock %}

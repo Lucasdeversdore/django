@@ -1,0 +1,21 @@
+{% extends 'monApp/base.html' %}
+{% block contenu %}
+    <h1>Hello mes status !</h1>
+    <p>Mes statuts sont :</p>
+    <ul>
+        {% for stat in statuts %}
+            <li>{{ stat.libelleStatut | upper }}</li>
+        {% endfor %}
+        <p>
+            J'ai
+            {% if statuts|length < 5 %}
+            peu de
+            {% elif statuts|length < 10 %}
+            quelques
+            {% else %}
+            beaucoup de
+            {% endif %}
+            statuts préférés.
+        </p>
+    </ul>
+{% endblock %}

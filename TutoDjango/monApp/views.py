@@ -1,33 +1,38 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from monApp.models import Categorie, Produit, Statut
+from monApp.models import Categorie, Produit, Statut, Rayon
 
 
-def home2(request):
-        return HttpResponse("<h1>Hello DJANGO")
+def home(request,param=None):
+    # print (dir(request))
+    # if param is None:
+    #     return HttpResponse("<h1>Hello Django!</h1>")
+    # else:
+    #     return HttpResponse(f"<h1>Hello {param} !</h1>")
+    # if request.GET and request.GET['name']:
+    #     string = request.GET["name"]
+    #     return HttpResponse("<h1>Hello %s </h1>" % string)
+    # elif param is None:
+    #     return HttpResponse("<h1>Hello Django!</h1>")
+    # else : 
+    #     return HttpResponse(f"<h1>Hello {param} !</h1>")
 
-def home(request, param):
-    return HttpResponse("<h1>Hello " + param + "</h1>")
+def accueil(request,param=None):
+    if request.GET and request.GET['name']:
+        string = request.GET["name"]
+        return render(request, 'monApp/home.html',{'param': string})
+    return render(request, 'monApp/home.html',{'param': param})
 
 def contact(request):
-    return HttpResponse("<h1>Contact us</h1>")
+    return render(request, 'monApp/contactus.html')
 
 def about(request):
-    return HttpResponse("<h1>About us</h1>")
+    return render(request, 'monApp/aboutus.html')
 
-def produit(request):
-    lesProds = ListProduits()
-    liste = "<ul>"
-    for prod in lesProds:
-        liste += f"<li> {prod.intituleProd} </li>"
-    liste += "</ul>"
-    return HttpResponse(liste)
-
-
-def ListProduits():
+def ListProduits(request):
     prdts = Produit.objects.all()
-    return prdts
+    return render(request, 'monApp/list_produits.html',{'prdts': prdts})
 
 def categorie(request):
     lesCat = ListCategorie()
@@ -38,20 +43,14 @@ def categorie(request):
     return HttpResponse(liste)
 
 
-def ListCategorie():
-    prdts = Categorie.objects.all()
-    return prdts
+def ListCategorie(request):
+    categories = Categorie.objects.all()
+    return render(request, 'monApp/list_categories.html',{'categories': categories})
 
+def ListStatut(request):
+    statuts = Statut.objects.all()
+    return render(request, 'monApp/list_statuts.html',{'statuts': statuts})
 
-def statut(request):
-    lesStatuts = ListStatut()
-    liste = "<ul>"
-    for statut in lesStatuts:
-        liste += f"<li> {statut.libelleStatut} </li>"
-    liste += "</ul>"
-    return HttpResponse(liste)
-
-
-def ListStatut():
-    prdts = Statut.objects.all()
-    return prdts
+def ListRayon(request):
+    rayons = Rayon.objects.all()
+    return render(request, 'monApp/list_rayons.html',{'rayons': rayons})

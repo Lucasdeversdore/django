@@ -1,0 +1,28 @@
+• création : virtualenv ~/venv
+• initialisation : source ~/venv/bin/activate
+• installation de DJANGO : pip install django pip install -r requirements.txt
+• vérification de la version : django-admin --version
+
+Le package Django est installé, ainsi qu'un certain nombre de dépendances : des packages dont Django a
+besoin pour fonctionner. Gardons la trace de tous ces packages dans un fichier requirements.txt. Il existe
+un raccourci très pratique pour faire cela : pip freeze > requirements.txt
+
+Créons maintenant cette application, en utilisant la sous-commande startapp dans l'utilitaire de ligne de
+commande dans le répertoire TutoDjango (racine du projet) : ./manage.py startapp monApp
+
+./manage.py runserver
+
+
+Maintenant que nous savons pourquoi les migrations sont importantes, créons-en une pour notre modèle.
+Exécutons une autre commande :
+En exécutant makemigrations, vous indiquez à DJANGO que vous avez effectué des changements à vos
+modèles (dans ce cas, vous en avez créé) et que vous aimeriez que ces changements soient stockés sous
+forme de migration. 
+
+./manage.py makemigrations monApp
+
+
+Maintenant, exécutez à nouveau la commande migrate pour créer les tables des modèles dans votre base
+de données :
+
+./manage.py migrate

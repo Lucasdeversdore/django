@@ -17,3 +17,7 @@ Réalisation du petit challenge
 Probleme avec les dates pour la création de produitADmin
 Probleme de clé étrangère pour le setOffline et setOnline (réglé en créant Online)
 Test avec la Debug Toolbar
+
+# TP 2
+
+Arret juste avant le style et problème avec le accueil à régler pour la prochaine fois
