@@ -16,4 +16,4 @@ Réalisation du petit challenge
 
 Probleme avec les dates pour la création de produitADmin
 Probleme de clé étrangère pour le setOffline et setOnline (réglé en créant Online)
-Arret du TD 2 juste avant la debug toolbar
+Test avec la Debug Toolbar
