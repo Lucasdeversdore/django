@@ -1,21 +1,34 @@
 {% extends 'monApp/base.html' %}
+
+{% block menu %}
+<h1>Liste des Catégories</h1>
+{% endblock %}
+
 {% block contenu %}
-    <h1>Hello mes categories !</h1>
-    <p>Mes categories sont :</p>
-    <ul>
-        {% for cate in categories %}
-            <li>{{ cate.nomCat | upper }}</li>
-        {% endfor %}
-        <p>
-            J'ai
-            {% if categories|length < 5 %}
-            peu de
-            {% elif categories|length < 10 %}
-            quelques
-            {% else %}
-            beaucoup de
-            {% endif %}
-            categories préférés.
-        </p>
-    </ul>
+    <table class="table">
+        <thead>
+            <th>Id</th>
+            <th>Nom Catégorie</th>
+
+        </thead>
+        <tbody>
+            {% for cate in categories %}
+            <tr>
+                <td>{{ cate.idCat }} </td>
+                <td>{{ cate.nomCat }} </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>
+    J'ai
+    {% if cate|length < 5 %}
+    peu de
+    {% elif cate|length < 10 %}
+    quelques
+    {% else %}
+    beaucoup de
+    {% endif %}
+    Catégories préférés.
+    </p>
 {% endblock %}

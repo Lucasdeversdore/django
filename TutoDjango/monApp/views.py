@@ -5,18 +5,18 @@ from monApp.models import Categorie, Produit, Statut, Rayon
 
 
 def home(request,param=None):
-    # print (dir(request))
-    # if param is None:
-    #     return HttpResponse("<h1>Hello Django!</h1>")
-    # else:
-    #     return HttpResponse(f"<h1>Hello {param} !</h1>")
-    # if request.GET and request.GET['name']:
-    #     string = request.GET["name"]
-    #     return HttpResponse("<h1>Hello %s </h1>" % string)
-    # elif param is None:
-    #     return HttpResponse("<h1>Hello Django!</h1>")
-    # else : 
-    #     return HttpResponse(f"<h1>Hello {param} !</h1>")
+    print (dir(request))
+    if param is None:
+        return HttpResponse("<h1>Hello Django!</h1>")
+    else:
+        return HttpResponse(f"<h1>Hello {param} !</h1>")
+    if request.GET and request.GET['name']:
+        string = request.GET["name"]
+        return HttpResponse("<h1>Hello %s </h1>" % string)
+    elif param is None:
+        return HttpResponse("<h1>Hello Django!</h1>")
+    else : 
+        return HttpResponse(f"<h1>Hello {param} !</h1>")
 
 def accueil(request,param=None):
     if request.GET and request.GET['name']:
