@@ -22,3 +22,7 @@ Test avec la Debug Toolbar
 
 Arret juste avant le style et problème avec le accueil à régler pour la prochaine fois
 Mise en place du bootstrap + régler le prblm de clé primaire
+
+# TD 3
+
+Commencement du TD 3 
