@@ -21,4 +21,4 @@ Test avec la Debug Toolbar
 # TP 2
 
 Arret juste avant le style et problème avec le accueil à régler pour la prochaine fois
-Mise en place du bootstrap
+Mise en place du bootstrap + régler le prblm de clé primaire
