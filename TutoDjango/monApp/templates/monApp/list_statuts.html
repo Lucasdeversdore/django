@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block contenu %}
+    <h2>{{titremenu}}</h2>
     <table class="table">
         <thead>
             <th>Id</th>
@@ -15,6 +16,7 @@
             <tr>
                 <td>{{ stat.idStatut }} </td>
                 <td>{{ stat.libelleStatut }} </td>
+                <td><a href="{% url 'dtl_stat' stat.idStatut %}">{{ stat.idStatut }}</a></td>
             </tr>
             {% endfor %}
         </tbody>

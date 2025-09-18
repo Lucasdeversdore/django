@@ -25,4 +25,5 @@ Mise en place du bootstrap + régler le prblm de clé primaire
 
 # TD 3
 
-Commencement du TD 3 
+Avancement du TD 3 jusqu'au Login/Register
+J'ai fais toutes les ListView

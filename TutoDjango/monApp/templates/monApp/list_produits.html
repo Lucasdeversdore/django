@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block contenu %}
+    <h2>{{titremenu}}</h2>
     <table class="table">
         <thead>
             <th>Id</th>
@@ -23,6 +24,7 @@
                 <td>{{ prdt.dateFabProd }} </td>
                 <td>{{ prdt.categorie }} </td>
                 <td>{{ prdt.status }} </td>
+                <td><a href="{% url 'dtl_prdt' prdt.refProd %}">{{ prdt.refProd }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
