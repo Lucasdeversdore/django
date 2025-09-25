@@ -26,3 +26,7 @@ Mise en place du bootstrap + régler le prblm de clé primaire
 # TD 3
 
 Finis le TD 3 en mettant en place le systeme de redirection des mails, de connexion et de register
+
+# TP 3 
+
+Page 7 du tp
