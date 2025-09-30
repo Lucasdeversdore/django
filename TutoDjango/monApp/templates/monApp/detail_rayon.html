@@ -9,4 +9,6 @@
     <li>Nom du rayon : {{ray.nomRayon}} </li>
 </ul>
 <a href="{% url 'lst_rayon' %}">Retour à la liste des rayons</a>
+<a href="{% url 'dlt-rayon' ray.idRayon %}">supprimer</a>
+<a href="{% url 'rayon-chng' ray.idRayon %}">modifier</a>
 {% endblock %}
