@@ -10,6 +10,7 @@ from monApp.forms import ContactUsForm, ProduitForm, CategorieForm, RayonForm
 from django.shortcuts import redirect
 from django.forms import BaseModelForm
 from django.urls import reverse_lazy
+from django.db.models import Count
 
 # def home(request,param=None):
 #     print (dir(request))
@@ -132,9 +133,13 @@ class CategorieListView(ListView):
     template_name = "monApp/list_categories.html"
     context_object_name = "categories" 
 
+    def get_queryset(self):
+    # Annoter chaque catégorie avec le nombre de produits liés
+        return Categorie.objects.annotate(nb_produits=Count('produits'))
+    
     def get_context_data(self, **kwargs):
         context = super(CategorieListView, self).get_context_data(**kwargs)
-        context['titremenu'] = "Liste des categories"
+        context['titremenu'] = "Liste de mes catégories"
         return context
 
 class CategorieDetailView(DetailView):
@@ -142,9 +147,14 @@ class CategorieDetailView(DetailView):
     template_name = "monApp/detail_categorie.html"
     context_object_name = "cate"
 
+    def get_queryset(self):
+    # Annoter chaque catégorie avec le nombre de produits liés
+        return Categorie.objects.annotate(nb_produits=Count('produits'))
+    
     def get_context_data(self, **kwargs):
         context = super(CategorieDetailView, self).get_context_data(**kwargs)
-        context['titremenu'] = "Détail du produit"
+        context['titremenu'] = "Détail de la catégorie"
+        context['prdts'] = self.object.produits.all()
         return context
 
 
@@ -176,6 +186,13 @@ class RayonListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(RayonListView, self).get_context_data(**kwargs)
         context['titremenu'] = "Liste des rayons"
+        ryns_dt = []
+        for rayon in context['rayons']:
+            total = 0
+            for contenir in rayon.contenirR.all():
+                total += contenir.refProd.prixUnitaireProd * contenir.qte
+            ryns_dt.append({'rayons': rayon,'total_stock': total})
+        context['rayons'] = ryns_dt
         return context
 
 class RayonDetailView(DetailView):

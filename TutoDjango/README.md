@@ -30,3 +30,7 @@ Finis le TD 3 en mettant en place le systeme de redirection des mails, de connex
 # TP 3 
 
 Finis le tp 3 avec les Update/Delete/Create pour catégorie, produit, update
+
+# TD 4
+
+Page 5 du tp + prblm avec les rayons

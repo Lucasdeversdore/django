@@ -10,27 +10,22 @@
         <thead>
             <th>Id</th>
             <th>Nom Rayon</th>
+            <th>Valeur marchande du rayon</th>
         </thead>
         <tbody>
-            {% for ray in rayons %}
+            {% for data in ryns_dt %}
             <tr>
-                <td>{{ ray.idRayon }} </td>
-                <td>{{ ray.nomRayon }} </td>
-                <td><a href="{% url 'dtl_rayon' ray.idRayon %}">{{ ray.idRayon }}</a></td>
+                <td><a href="{% url 'dtl_rayon' data.rayon.idRayon %}">{{ data.rayon.idRayon }}</a></td>
+                <td>{{ data.rayon.nomRayon }} </td>
+                <td>{{ data.total_stock }} €</td>
+                <td>
+                <a href="{% url 'dtl_rayon' data.rayon.idRayon %}" class="btn btn-primary mt-2">Détails</a>
+                <a href="{% url 'rayon-chng' data.rayon.idRayon %}" class="btn btn-warning mt-2">Modifier</a>
+                <a href="{% url 'dlt-rayon' data.rayon.idRayon %}" class="btn btn-danger mt-2">Supprimer</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <p>
-    J'ai
-    {% if prdts|length < 5 %}
-    peu de
-    {% elif prdts|length < 10 %}
-    quelques
-    {% else %}
-    beaucoup de
-    {% endif %}
-    rayons préférés.
-    </p>
     <p><a href="{% url 'crt-rayon' %}">Créer un nouveau rayon</a></p>
 {% endblock %}
