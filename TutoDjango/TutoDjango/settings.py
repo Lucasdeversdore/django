@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+LOGIN_URL = '/monApp/login/'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'monApp',
     'debug_toolbar',
     'django_bootstrap5',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

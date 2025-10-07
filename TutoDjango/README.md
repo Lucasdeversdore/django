@@ -33,4 +33,6 @@ Finis le tp 3 avec les Update/Delete/Create pour catégorie, produit, update
 
 # TD 4
 
-Page 5 du tp + prblm avec les rayons
+Page 11 du tp
+
+Fais select_related Prefetc, les logins

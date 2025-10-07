@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import *
-from monApp.models import Categorie, Produit, Statut, Rayon
+from monApp.models import Categorie, Produit, Statut, Rayon, Contenir
 from django.contrib.auth import *
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
@@ -10,7 +10,9 @@ from monApp.forms import ContactUsForm, ProduitForm, CategorieForm, RayonForm
 from django.shortcuts import redirect
 from django.forms import BaseModelForm
 from django.urls import reverse_lazy
-from django.db.models import Count
+from django.db.models import Count, Prefetch
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 # def home(request,param=None):
 #     print (dir(request))
@@ -108,8 +110,9 @@ class ProduitListView(ListView):
     template_name = "monApp/list_produits.html"
     context_object_name = "prdts"
     
-    def get_queryset(self ) :
-        return Produit.objects.order_by("prixUnitaireProd")
+    def get_queryset(self):
+        # Charge les catégories et les statuts en même temps
+        return Produit.objects.select_related('categorie').select_related('statutProd')
 
     def get_context_data(self, **kwargs):
         context = super(ProduitListView, self).get_context_data(**kwargs)
@@ -183,6 +186,13 @@ class RayonListView(ListView):
     template_name = "monApp/list_rayons.html"
     context_object_name = "rayons" 
 
+    def get_queryset(self):
+        # Précharge tous les "contenir" de chaque rayon,
+        # et en même temps le produit de chaque contenir
+        return Rayon.objects.prefetch_related(
+            Prefetch("contenirR", queryset=Contenir.objects.select_related("refProd"))
+        )
+
     def get_context_data(self, **kwargs):
         context = super(RayonListView, self).get_context_data(**kwargs)
         context['titremenu'] = "Liste des rayons"
@@ -191,9 +201,14 @@ class RayonListView(ListView):
             total = 0
             for contenir in rayon.contenirR.all():
                 total += contenir.refProd.prixUnitaireProd * contenir.qte
-            ryns_dt.append({'rayons': rayon,'total_stock': total})
-        context['rayons'] = ryns_dt
+            ryns_dt.append({
+                'rayon': rayon,
+                'total_stock': total
+            })
+        context['ryns_dt'] = ryns_dt
         return context
+
+
 
 class RayonDetailView(DetailView):
     model = Rayon
@@ -201,9 +216,29 @@ class RayonDetailView(DetailView):
     context_object_name = "ray"
 
     def get_context_data(self, **kwargs):
-        context = super(RayonDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['titremenu'] = "Détail du rayon"
+
+        prdts_dt = []
+        total_rayon = 0
+        total_nb_produit = 0
+
+        for contenir in self.object.contenirR.all():
+            total_produit = contenir.refProd.prixUnitaireProd * contenir.qte
+            prdts_dt.append({
+                'produit': contenir.refProd,
+                'qte': contenir.qte,
+                'prix_unitaire': contenir.refProd.prixUnitaireProd,
+                'total_produit': total_produit
+            })
+            total_rayon += total_produit
+            total_nb_produit += contenir.qte
+
+        context['prdts_dt'] = prdts_dt
+        context['total_rayon'] = total_rayon
+        context['total_nb_produit'] = total_nb_produit
         return context
+
 
 
 class ConnectView(LoginView):
@@ -238,6 +273,7 @@ class DisconnectView(TemplateView):
         logout(request)
         return render(request, self.template_name)
 
+@method_decorator(login_required, name='dispatch')
 class ProduitCreateView(CreateView):
     model = Produit
     form_class=ProduitForm
@@ -247,6 +283,7 @@ class ProduitCreateView(CreateView):
         prdt = form.save()
         return redirect('dtl_prdt', prdt.refProd)
 
+@method_decorator(login_required, name='dispatch')
 class ProduitUpdateView(UpdateView):
     model = Produit
     form_class=ProduitForm
@@ -255,11 +292,13 @@ class ProduitUpdateView(UpdateView):
         prdt = form.save()
         return redirect('dtl_prdt', prdt.refProd)
 
+@method_decorator(login_required, name='dispatch')
 class ProduitDeleteView(DeleteView):
     model = Produit
     template_name = "monApp/delete_produit.html"
     success_url = reverse_lazy('lst_prdts')
 
+@method_decorator(login_required, name='dispatch')
 class CategorieCreateView(CreateView):
     model = Categorie
     form_class=CategorieForm
@@ -268,7 +307,7 @@ class CategorieCreateView(CreateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         cate = form.save()
         return redirect('dtl_cate', cate.idCat)
-
+@method_decorator(login_required, name='dispatch')
 class CategorieUpdateView(UpdateView):
     model = Categorie
     form_class=CategorieForm
@@ -276,12 +315,12 @@ class CategorieUpdateView(UpdateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         cate = form.save()
         return redirect('dtl_cate', cate.idCat)
-
+@method_decorator(login_required, name='dispatch')
 class CategorieDeleteView(DeleteView):
     model = Categorie
     template_name = "monApp/delete_categorie.html"
     success_url = reverse_lazy('lst_cate')
-
+@method_decorator(login_required, name='dispatch')
 class RayonCreateView(CreateView):
     model = Rayon
     form_class=RayonForm
@@ -290,7 +329,7 @@ class RayonCreateView(CreateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         rayon = form.save()
         return redirect('dtl_rayon', rayon.idRayon)
-
+@method_decorator(login_required, name='dispatch')
 class RayonUpdateView(UpdateView):
     model = Rayon
     form_class=RayonForm
@@ -298,7 +337,7 @@ class RayonUpdateView(UpdateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         rayon = form.save()
         return redirect('dtl_rayon', rayon.idRayon)
-
+@method_decorator(login_required, name='dispatch')
 class RayonDeleteView(DeleteView):
     model = Rayon
     template_name = "monApp/delete_rayon.html"
