@@ -1,0 +1,10 @@
+{% extends 'monApp/base.html' %}
+{% block contenu %}
+<h1> Ajouter un produit dans le rayon {{ rayon.nomRayon }} </h1>
+<form action="" method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success mt-2">Valider</button>
+    <a href="{% url 'dtl_rayon' rayon.idRayon %}" class="btn btn-info mt-2">Retour</a>
+</form>
+{% endblock %}

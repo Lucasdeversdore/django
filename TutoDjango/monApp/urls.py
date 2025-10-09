@@ -32,7 +32,7 @@ urlpatterns = [
     path("rayons/", views.RayonCreateView.as_view(), name="crt-rayon"),
     path("rayons/<pk>/update/", views.RayonUpdateView.as_view(), name="rayon-chng"),
     path("rayons/<pk>/delete/", views.RayonDeleteView.as_view(), name="dlt-rayon"),
-
+    path("rayon/<pk>/cntnr", views.ContenirCreateView.as_view(), name="cntnr-crt"),
     # Auth
     path("login/", views.ConnectView.as_view(), name="login"),
     path("register/", views.RegisterView.as_view(), name="register"),

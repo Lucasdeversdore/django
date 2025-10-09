@@ -13,7 +13,7 @@
     <a href="{% url 'lst_rayon' %}">Retour à la liste des rayons</a>
     <a href="{% url 'dlt-rayon' ray.idRayon %}">Supprimer</a>
     <a href="{% url 'rayon-chng' ray.idRayon %}">Modifier</a>
-
+    <a href="{% url 'cntnr-crt' ray.idRayon %}" class="btn btn-success">Ajouter un produit</a>
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
             <h4>
@@ -37,7 +37,7 @@
                                         <li>Quantité : {{ data.qte }}</li>
                                         <li>Total : {{ data.total_produit }} €</li>
                                     </ul>
-                                    <a href="{% url 'dtl-prdt' data.produit.refProd %}" 
+                                    <a href="{% url 'dtl_prdt' data.produit.refProd %}" 
                                        class="btn btn-primary mt-2">Détails</a>
                                 </div>
                             </div>

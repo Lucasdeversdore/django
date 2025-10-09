@@ -6,13 +6,15 @@ from django.contrib.auth import *
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
-from monApp.forms import ContactUsForm, ProduitForm, CategorieForm, RayonForm
+from monApp.forms import ContactUsForm, ProduitForm, CategorieForm, RayonForm, ContenirForm
 from django.shortcuts import redirect
 from django.forms import BaseModelForm
 from django.urls import reverse_lazy
 from django.db.models import Count, Prefetch
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db.models import Count, Q
+from django.views.generic import ListView
 
 # def home(request,param=None):
 #     print (dir(request))
@@ -111,7 +113,13 @@ class ProduitListView(ListView):
     context_object_name = "prdts"
     
     def get_queryset(self):
-        # Charge les catégories et les statuts en même temps
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Produit.objects.filter(intituleProd__icontains=query).select_related('categorie').select_related('statutProd')
+        # Si aucun terme de recherche, retourner tous les produits
+        # Charge les catégories en même temps
         return Produit.objects.select_related('categorie').select_related('statutProd')
 
     def get_context_data(self, **kwargs):
@@ -137,7 +145,13 @@ class CategorieListView(ListView):
     context_object_name = "categories" 
 
     def get_queryset(self):
-    # Annoter chaque catégorie avec le nombre de produits liés
+        # Annoter chaque catégorie avec le nombre de produits liés
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Categorie.objects.filter(nomCat__icontains=query).annotate(nb_produits=Count('produits'))
+        # Si aucun terme de recherche, retourner tous les produits
         return Categorie.objects.annotate(nb_produits=Count('produits'))
     
     def get_context_data(self, **kwargs):
@@ -164,7 +178,17 @@ class CategorieDetailView(DetailView):
 class StatutListView(ListView):
     model = Statut
     template_name = "monApp/list_statuts.html"
-    context_object_name = "statuts" 
+    context_object_name = "statuts"
+
+    def get_queryset(self):
+        # Annoter chaque catégorie avec le nombre de produits liés
+        # Surcouche pour filtrer les résultats en fonction de la recherche
+        # Récupérer le terme de recherche depuis la requête GET
+        query = self.request.GET.get('search')
+        if query:
+            return Statut.objects.filter(libelleStatut__icontains=query).annotate(nb_produits=Count('produitStatut'))
+        # Si aucun terme de recherche, retourner tous les produits
+        return Statut.objects.annotate(nb_produits=Count('produitStatut'))
 
     def get_context_data(self, **kwargs):
         context = super(StatutListView, self).get_context_data(**kwargs)
@@ -181,21 +205,29 @@ class StatutDetailView(DetailView):
         context['titremenu'] = "Détail du statut"
         return context
 
+
+
 class RayonListView(ListView):
     model = Rayon
     template_name = "monApp/list_rayons.html"
-    context_object_name = "rayons" 
+    context_object_name = "rayons"
 
     def get_queryset(self):
-        # Précharge tous les "contenir" de chaque rayon,
-        # et en même temps le produit de chaque contenir
-        return Rayon.objects.prefetch_related(
-            Prefetch("contenirR", queryset=Contenir.objects.select_related("refProd"))
-        )
+        # Récupérer le terme de recherche
+        query = self.request.GET.get('search')
+        if query:
+            # Filtrer sur le nom du rayon ou l'id
+            return Rayon.objects.filter(
+                Q(nomRayon__icontains=query) | Q(idRayon__icontains=query)
+            ).annotate(nb_produits=Count('contenirR'))
+        
+        # Retourner tous les rayons avec le nombre de produits liés
+        return Rayon.objects.annotate(nb_produits=Count('contenirR'))
 
     def get_context_data(self, **kwargs):
-        context = super(RayonListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['titremenu'] = "Liste des rayons"
+
         ryns_dt = []
         for rayon in context['rayons']:
             total = 0
@@ -205,8 +237,10 @@ class RayonListView(ListView):
                 'rayon': rayon,
                 'total_stock': total
             })
+        
         context['ryns_dt'] = ryns_dt
         return context
+
 
 
 
@@ -343,15 +377,22 @@ class RayonDeleteView(DeleteView):
     template_name = "monApp/delete_rayon.html"
     success_url = reverse_lazy('lst_rayon')
 
-# def ProduitUpdate(request, pk):
-#     prdt = Produit.objects.get(refProd=pk)
-#         if request.method == 'POST':
-#             form = ProduitForm(request.POST, instance=prdt)
-#             if form.is_valid():
-#                 # mettre à jour le produit existant dans la base de données
-#                 form.save()
-#                 # rediriger vers la page détaillée du produit que nous venons de mettre à jour
-#                 return redirect('dtl-prdt', prdt.refProd)
-#         else:
-#             form = ProduitForm(instance=prdt)
-#         return render(request,'monApp/update_produit.html', {'form': form})
+class ContenirCreateView(CreateView):
+    model = Contenir
+    form_class = ContenirForm
+    template_name = "monApp/create_contenir.html"
+
+    def form_valid(self, form):
+        # Récupération du rayon courant via l'URL
+        rayon = Rayon.objects.get(pk=self.kwargs['pk'])
+        form.instance.idRayon = rayon
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # Après validation, on retourne vers le détail du rayon
+        return reversed('dtl-ryn', args=[self.kwargs['pk']])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rayon'] = Rayon.objects.get(pk=self.kwargs['pk'])
+        return context

@@ -1,5 +1,6 @@
 from django import forms
-from monApp.models import Produit, Categorie, Rayon
+from monApp.models import Produit, Categorie, Rayon, Contenir
+
 class ContactUsForm(forms.Form):
     name = forms.CharField(required=False)
     email = forms.EmailField()
@@ -8,8 +9,7 @@ class ContactUsForm(forms.Form):
 class ProduitForm(forms.ModelForm):
     class Meta:
         model = Produit
-        #fields = '__all__'
-        exclude = ['categorie', 'status']
+        exclude = ['categorie', 'statut']
 
 class CategorieForm(forms.ModelForm):
     class Meta:
@@ -20,3 +20,8 @@ class RayonForm(forms.ModelForm):
     class Meta:
         model = Rayon
         fields = '__all__'
+
+class ContenirForm(forms.ModelForm):
+    class Meta:
+        model = Contenir
+        fields = ['refProd', 'qte']
