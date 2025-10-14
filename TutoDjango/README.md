@@ -33,6 +33,4 @@ Finis le tp 3 avec les Update/Delete/Create pour catégorie, produit, update
 
 # TD 4
 
-Page 11 du tp
-
-Fais select_related Prefetc, les logins
+Finis le td 4 et réglage des problemes comme les prix et quantités négatives et pas les meme noms en créant un produit 

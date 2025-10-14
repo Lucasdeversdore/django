@@ -9,12 +9,18 @@ from django.core.mail import send_mail
 from monApp.forms import ContactUsForm, ProduitForm, CategorieForm, RayonForm, ContenirForm
 from django.shortcuts import redirect
 from django.forms import BaseModelForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db.models import Count, Prefetch
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Count, Q
 from django.views.generic import ListView
+from django.db import IntegrityError
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 # def home(request,param=None):
 #     print (dir(request))
@@ -383,16 +389,31 @@ class ContenirCreateView(CreateView):
     template_name = "monApp/create_contenir.html"
 
     def form_valid(self, form):
-        # Récupération du rayon courant via l'URL
-        rayon = Rayon.objects.get(pk=self.kwargs['pk'])
-        form.instance.idRayon = rayon
-        return super().form_valid(form)
+        rayon = get_object_or_404(Rayon, pk=self.kwargs['pk'])
+        produit = form.cleaned_data['refProd']
+        qte_to_add = form.cleaned_data['qte']
+
+        if qte_to_add < 0:
+            form.add_error('qte', "La quantité ne peut pas être négative.")
+            return self.form_invalid(form)
+
+        contener_obj, created = Contenir.objects.get_or_create(
+            refProd=produit,
+            idRayon=rayon,
+            defaults={'qte': qte_to_add}
+        )
+
+        if not created:
+            # Si déjà présent, on met à jour la quantité
+            contener_obj.qte = qte_to_add
+            contener_obj.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        # Après validation, on retourne vers le détail du rayon
-        return reversed('dtl-ryn', args=[self.kwargs['pk']])
+        return reverse('dtl_rayon', args=[self.kwargs['pk']])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['rayon'] = Rayon.objects.get(pk=self.kwargs['pk'])
+        context['rayon'] = get_object_or_404(Rayon, pk=self.kwargs['pk'])
         return context
